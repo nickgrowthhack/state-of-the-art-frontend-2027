@@ -5,6 +5,10 @@
     "build": {
       "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
+      // `NEXT_E2E` altera a saída do build (expõe o testing API), então precisa
+      // entrar na chave de cache — senão o turbo serve um build feito com o
+      // outro valor da flag.
+      "env": ["NEXT_E2E"],
       "outputs": [".next/**", "!.next/cache/**"]
     },
     "start": {
@@ -27,6 +31,12 @@
     },
     "test:e2e": {
       "dependsOn": ["^build"],
+      "env": ["CI", "NEXT_E2E"],
+      // Repassado sem entrar na chave de cache: é específico da máquina. Quem
+      // guarda os browsers do Playwright fora do diretório padrão depende dele,
+      // e o turbo filtra o ambiente por padrão — sem isto, o navegador "não
+      // existe" só quando o teste roda via turbo.
+      "passThroughEnv": ["PLAYWRIGHT_BROWSERS_PATH"],
       "cache": false
     }
   }

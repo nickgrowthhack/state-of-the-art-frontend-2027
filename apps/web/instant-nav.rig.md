@@ -36,6 +36,19 @@ Porta dedicada e host `127.0.0.1` de propósito: o testing API usa o cookie
 `next-instant-navigation-testing`, **escopado por domínio e não por porta**. Um
 `next dev` em `localhost:3000` compartilharia o cookie e contaminaria a run.
 
+## WALLS
+
+- **`PLAYWRIGHT_BROWSERS_PATH`.** Quem guarda os browsers fora do diretório
+  padrão depende dessa variável, e o turbo filtra o ambiente por padrão. Ela está
+  declarada em `passThroughEnv` na task `test:e2e` do [turbo.json](../../turbo.json)
+  — sem isso, o teste passa rodando de `apps/web` e falha com "executable doesn't
+  exist" só quando roda via `pnpm test:e2e` da raiz.
+- **Rotas com dados de URL não entregam o conteúdo específico no shell.** Com
+  Partial Prefetching, a navegação aquece o App Shell **compartilhado** da rota,
+  não a página daquele slug — mesmo que o slug esteja em `generateStaticParams` e
+  a página apareça como estática na tabela do build. Assertar o conteúdo
+  dependente do param dentro do lock é vermelho legítimo, não flake.
+
 ## TEST USER
 
 Nenhum. As rotas cobertas são públicas e não leem sessão. Quando surgir rota

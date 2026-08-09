@@ -54,11 +54,15 @@ test.describe("/demo/[slug]", () => {
       await page.getByTestId("topic-link-dados-de-url").click()
       await page.waitForURL((url) => url.pathname === "/demo/dados-de-url")
 
-      // O shell é compartilhado por todos os slugs. O detalhe também está no
-      // prerender porque o slug vem de generateStaticParams — se alguém subir
-      // uma leitura não cacheada acima do boundary, esta asserção cai.
+      // Com Partial Prefetching, o que a navegação aquece é o App Shell
+      // compartilhado da rota — não a página estática daquele slug. Então o
+      // shell aparece na hora, e o detalhe, que depende do param, não: ele
+      // pertence a uma única URL. É por isso que `params` desce como promise
+      // para dentro do boundary.
       await expect(page.getByTestId("topic-shell")).toBeVisible()
-      await expect(page.getByTestId("topic-detail")).toBeVisible()
+      await expect(page.getByTestId("topic-detail")).toHaveCount(0)
     })
+
+    await expect(page.getByTestId("topic-detail")).toBeVisible()
   })
 })
