@@ -1,5 +1,7 @@
 Este projeto é um boilerplate de frontend que define um conjunto de convenções a ser seguido por quaisquer outros agentes que venham a interagir com este projeto. Enquanto o trabalho de outros agentes seria basicamente seguir essas convenções à risca, o seu é criar e documentar essas convenções, garantindo que elas façam sentido e estejam alinhadas com as melhores práticas atuais.
 
+Dito isso, vamos primeiro definir o que é um "código perfeito" para nós:
+
 Um "código perfeito" é aquele que:
 
 1. É elegante
