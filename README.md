@@ -6,7 +6,35 @@ Dito isso, se você está lendo isso, a essa altura, já devo ter publicado um p
 
 ## Stacks
 
-[...]
+As versões abaixo são as efetivamente instaladas (resolvidas pelo lockfile), não os ranges declarados no `package.json`.
+
+**Core**
+
+- **Next.js** `16.3.0` — App Router, React Server Components por padrão
+- **React** `19.2.8` e **React DOM** `19.2.8`
+- **TypeScript** `5.9.3` — modo `strict`, `moduleResolution: bundler`, alias `@/*`
+
+**Estilo**
+
+- **Tailwind CSS** `4.3.3` — configuração CSS-first via `@theme inline` em [app/globals.css](app/globals.css); não existe `tailwind.config.*`
+- **@tailwindcss/postcss** `4.3.3` — único plugin do [postcss.config.mjs](postcss.config.mjs)
+
+**Build e runtime**
+
+- **Turbopack** — bundler padrão do Next.js 16, em dev e em build (sem opt-in)
+- **next/font** — **Geist** e **Geist Mono** auto-hospedadas, expostas como `--font-geist-sans` / `--font-geist-mono` em [app/layout.tsx](app/layout.tsx)
+- **next/image** — otimização de imagens, usado em [app/page.tsx](app/page.tsx)
+
+**Qualidade de código**
+
+- **ESLint** `9.39.5` — flat config em [eslint.config.mjs](eslint.config.mjs)
+- **eslint-config-next** `16.3.0` — presets `core-web-vitals` + `typescript`
+
+**Tipos e ferramental**
+
+- **@types/react** `19.2.18` e **@types/react-dom** `19.2.4` — fixados via `overrides` no `package.json`
+- **@types/node** `20.19.43`
+- **npm** — `package-lock.json` (lockfile v3) é o único lockfile do repo
 
 ## Getting Started
 
