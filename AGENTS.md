@@ -41,6 +41,7 @@ Todos os comandos abaixo rodam **na raiz do repositório**. Os que agem sobre c�
 | Lint | `pnpm lint` |
 | Checagem de tipos | `pnpm typecheck` |
 | Formatação | `pnpm format` |
+| Testes end-to-end | `pnpm test:e2e` |
 | Adicionar dependência a um workspace | `pnpm --filter <workspace> add <pkg>` |
 | Adicionar dependência de desenvolvimento a um workspace | `pnpm --filter <workspace> add -D <pkg>` |
 | Adicionar ferramenta de repositório (raiz) | `pnpm add -Dw <pkg>` |
@@ -77,3 +78,43 @@ O repositório é um monorepo pnpm + Turborepo no layout do template `next-monor
 - **Componentes de design system vão em `packages/ui`; composições específicas do app vão em `apps/web/components`.** É essa a divisão que os dois `components.json` codificam: no do app, o alias `ui` aponta para `@workspace/ui/components` e o alias `components` aponta para `@/components`.
 - **`apps/web/AGENTS.md` e `apps/web/CLAUDE.md` são gerados pelo `next dev`** (`agentRules: true` no `next.config.ts`) e ficam ao lado do app, não na raiz. São arquivos versionados: commite-os junto com o seu trabalho em vez de tentar removê-los.
 - Cada workspace expõe os mesmos scripts (`lint`, `format`, `typecheck`, e `dev`/`build`/`start` onde faz sentido); o `turbo.json` da raiz é quem os orquestra. Um workspace novo que não expuser esses scripts simplesmente não participa de `pnpm lint` e `pnpm typecheck`.
+
+# Renderização
+
+**`cacheComponents` está ligado** no `apps/web/next.config.ts`. A regra que sai disso é uma só: *o que é estático pinta imediatamente; o que depende do request fica abaixo de um `<Suspense>`.* A parte prerenderizada de uma rota é o **shell estático** — é ela que entra no prefetch e aparece antes de qualquer resposta do servidor.
+
+Antes de escrever código de rota, leia o guia correspondente em `apps/web/node_modules/next/dist/docs/`. Esta versão do Next mudou o suficiente para que a memória do modelo esteja errada em pontos que o build não pega.
+
+- **Nunca exporte `dynamic`, `revalidate` ou `fetchCache`.** Com `cacheComponents` ligado eles são erro, não aviso. O substituto de `revalidate` é `cacheLife`; `dynamic = 'force-dynamic'` e `fetchCache` simplesmente deixam de existir. `experimental_ppr` também foi removido — PPR é implícito.
+- **Todo `"use cache"` declara um `cacheLife` explícito.** Sem ele, aninhar um cache de vida curta abaixo do escopo derruba o prerender. E **nunca use o perfil `"seconds"` em algo que deva estar no shell**: `stale` abaixo de 30 segundos é excluído do prerender, porque um prefetch expiraria antes de o usuário clicar. Esse é o erro mais silencioso da lista — ele não parece um erro de cache, parece uma rota que ficou lenta.
+- **Use `io()`, não `connection()`.** Para valores não determinísticos (`new Date()`, `Math.random()`, `crypto.randomUUID()`), `await io()` de `next/cache` marca onde a leitura começa. `connection()` também tira o conteúdo do shell, mas fica suspenso até uma navegação real chegar ao servidor, então **bloqueia o prefetch**. Só use `connection()` quando renderizar realmente precisar esperar um request de verdade.
+- **`params` e `searchParams` descem como promise para dentro do boundary.** Nunca faça `await params` no topo da página. Vale **mesmo quando todos os valores estão em `generateStaticParams`**: um param conhecido ainda pertence a uma única URL, e lê-lo acima do boundary amarra o shell compartilhado a ela.
+- **`generateStaticParams` nunca retorna lista vazia.** Isso era o padrão antes do Next 16 e agora é erro: o Next precisa de ao menos um param para prerenderizar a rota e validar que ela produz um shell.
+- **O elemento de LCP fica fora de todo boundary.** Um boundary alto demais — no layout raiz, por exemplo — passa na validação e ainda assim entrega uma tela em branco.
+- **Estado de componente sobrevive à navegação.** O Next passou a usar `<Activity mode="hidden">` no client-side, então `useState`, campos de formulário e posição de scroll persistem ao sair e voltar. Padrões que contavam com desmontagem para resetar estado quebram silenciosamente.
+
+## Prefetch parcial
+
+**`partialPrefetching` está ligado**, e depende de `cacheComponents` — sem ele o `next dev` e o `next build` falham na validação da config. Um `<Link>` passa a carregar um **App Shell compartilhado por rota**, reaproveitado por todos os links que apontam para ela, em vez de um prefetch por link visível.
+
+- **`prefetch` é configuração do destino, não do link.** Ele vai como `export const prefetch` no `page.tsx`/`layout.tsx` de destino. É o engano mais comum.
+- **Não escreva `export const prefetch = 'partial'`.** Com a flag ligada isso é redundante. E `'auto'` é o default — escrevê-lo explicitamente é ruído. O único valor que se escreve aqui é `'force-disabled'`, e com justificativa.
+- **`<Link prefetch={true}>` exige justificativa.** Ele custa uma invocação de servidor por link prefetchável. O default já entrega o shell.
+
+# Testes
+
+**O teste `instant()` é a guarda de navegação deste repositório.** Ele trava a resposta do servidor durante o callback: o que estiver visível ali dentro veio do shell estático. Toda rota que deve ser instantânea entrega um — em `apps/web/e2e/`, junto do exemplo em `demo.instant.spec.ts`.
+
+O contrato de como buildar, expor e medir vive em [apps/web/instant-nav.rig.md](apps/web/instant-nav.rig.md). Leia antes de escrever o primeiro spec de uma rota nova.
+
+- **`instant()` é uma régua, não um cronômetro.** Sem timeout customizado, sem retry, sem medir tempo. `retries: 0` no `playwright.config.ts` é intencional: um teste que só passa na segunda tentativa está medindo latência, não estrutura.
+- **A asserção negativa é o que dá valor ao teste.** Dentro do lock, o conteúdo diferido tem que ter `toHaveCount(0)`; fora dele, tem que estar visível. Sem esse par, o spec passa por vazio.
+- **Rode o diferencial antes de commitar.** Desfaça a correção, confirme o vermelho, refaça. É o único jeito de saber que o teste guarda alguma coisa.
+- **`NEXT_E2E` jamais é definido em produção.** É ele que liga `experimental.exposeTestingApiInProductionBuild`. Sem a variável o testing API não é exposto — e `instant()` **não lança erro** nesse caso, ele passa por vazio. Um verde em ambiente sem a flag não significa nada.
+- **Nunca meça contra `next dev`.** O Next não faz prefetch em desenvolvimento; a navegação client-side não teria o que medir. O `webServer` do Playwright já faz o build de produção sozinho.
+
+## Insights de desenvolvimento
+
+Parte da validação só existe em `next dev` e não falha o build: leituras de URL alto demais na árvore (`instant-shell-url-data`) e shells que ficam vazios aparecem no log do dev server e na aba Insights do overlay. Precisa de navegador de verdade em rotas concretas — `curl` e `next build` não disparam.
+
+Se aparecer erro de validação de `instant` em **todas** as rotas, inclusive nas que você não tocou, suspeite primeiro do dev server: um processo que ficou de pé atravessando mudança de `next.config.ts` acumula estado degradado. Reinicie antes de investigar o código.

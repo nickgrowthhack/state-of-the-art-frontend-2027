@@ -29,4 +29,13 @@ jobs:
 
       - run: pnpm lint
 
+      - run: pnpm typecheck
+
       - run: pnpm build
+
+      # O `webServer` do Playwright faz o build de produção sozinho: prefetch
+      # não roda em `next dev`, então a navegação client-side só é mensurável
+      # contra `next start`.
+      - run: pnpm --filter web exec playwright install --with-deps chromium
+
+      - run: pnpm test:e2e
