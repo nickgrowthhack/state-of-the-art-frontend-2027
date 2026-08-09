@@ -1,3 +1,5 @@
+# state-of-the-art-frontend-2027
+
 Confesso ter bastante ciúmes desta estrutura organizacional e estou, na verdade, torcendo para que não muitos a vejam e a compartilhem. De fato, não vou expor aqui completamente a engenharia e a arquitetura de frontend dos meus projetos; apenas uma parte dela, mas talvez entregando pistas o suficiente para alguém decompilar ela por completo. Seja como for, o objetivo aqui é manter um repositório público que reflita, na minha opinião e experiência particular, as melhores práticas para desenvolvimento web em 2027.
 
 Dito isso, se você está lendo isso, a essa altura, já devo ter publicado um post no meu blog pessoal, a título de "O frontend que eu monto quando nenhum endemoniado está discordando de mim". Este título não foi inspirado em nenhuma experiência pessoal em que quis matar outro desenvolvedor que ainda trabalha comigo.
