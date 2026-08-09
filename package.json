@@ -2,7 +2,13 @@
   "name": "state-of-the-art-frontend-2027",
   "version": "0.1.0",
   "private": true,
+  "packageManager": "pnpm@10.22.0",
+  "engines": {
+    "node": ">=22",
+    "pnpm": ">=10"
+  },
   "scripts": {
+    "preinstall": "npx only-allow pnpm",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
@@ -23,8 +29,13 @@
     "tailwindcss": "^4",
     "typescript": "^5"
   },
-  "overrides": {
-    "@types/react": "19.2.18",
-    "@types/react-dom": "19.2.4"
+  "pnpm": {
+    "overrides": {
+      "@types/react": "19.2.18",
+      "@types/react-dom": "19.2.4"
+    },
+    "onlyBuiltDependencies": [
+      "unrs-resolver"
+    ]
   }
 }

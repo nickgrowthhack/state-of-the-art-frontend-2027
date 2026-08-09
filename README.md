@@ -16,22 +16,21 @@ Dito isso, se você está lendo isso, a essa altura, já devo ter publicado um p
 - **next/image** — otimização de imagens, usado em [app/page.tsx](app/page.tsx)
 - **ESLint** `9.39.5` — flat config em [eslint.config.mjs](eslint.config.mjs)
 - **eslint-config-next** `16.3.0` — presets `core-web-vitals` + `typescript`
-- **@types/react** `19.2.18` e **@types/react-dom** `19.2.4` — fixados via `overrides` no `package.json`
+- **@types/react** `19.2.18` e **@types/react-dom** `19.2.4` — fixados via `pnpm.overrides` no `package.json`
 - **@types/node** `20.19.43`
-- **npm** — `package-lock.json` (lockfile v3) é o único lockfile do repo
+- **pnpm** `10.22.0` — `pnpm-lock.yaml` (lockfile v9) é o único lockfile do repo; a versão é fixada pelo campo `packageManager` e o `preinstall` bloqueia npm/yarn/bun
+
+## Skills
+
+[...]
 
 ## Getting Started
 
-First, run the development server:
+Install the dependencies and start the development server:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+pnpm install
 pnpm dev
-# or
-bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.

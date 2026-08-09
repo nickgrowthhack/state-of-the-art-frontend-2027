@@ -1,0 +1,32 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Sem o input `version`: a versão vem do campo `packageManager` do
+      # package.json, que é a única fonte de verdade do projeto.
+      - uses: pnpm/action-setup@v4
+
+      # Precisa vir depois do setup do pnpm — `cache: pnpm` só localiza o
+      # store se o binário do pnpm já estiver no PATH.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      # Falha se o lockfile estiver dessincronizado do package.json,
+      # em vez de corrigi-lo silenciosamente.
+      - run: pnpm install --frozen-lockfile
+
+      - run: pnpm lint
+
+      - run: pnpm build
