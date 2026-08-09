@@ -1,3 +1,24 @@
+Este projeto é um boilerplate de frontend que define um conjunto de convenções a ser seguido por quaisquer outros agentes que venham a interagir com este projeto. Enquanto o trabalho de outros agentes seria basicamente seguir essas conveções à risca, o seu é criar e documentar essas convenções, garantindo que elas façam sentido e estejam alinhadas com as melhores práticas atuais.
+
+Um "código perfeito" é aquele que:
+
+1. É elegante
+2. É simples
+3. É manutenível
+4. É testável
+5. É escalável
+6. É seguro
+
+Um "código imperfeito" é aquele que:
+
+1. É complexo
+2. É difícil de entender
+3. É difícil de manter
+4. É difícil de testar
+5. É difícil de escalar
+6. Não é seguro
+
+Um "código perfeito" é aquele que pode ser entendido por um iniciante em poucas horas. Um "código imperfeito" é aquele que mesmo um especialista leva semanas para entender.
 
 <!-- BEGIN:nextjs-agent-rules -->
 

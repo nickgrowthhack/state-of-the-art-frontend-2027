@@ -4,6 +4,10 @@ Confesso ter bastante ciúmes desta estrutura organizacional e estou, na verdade
 
 Dito isso, se você está lendo isso, a essa altura, já devo ter publicado um post no meu blog pessoal, a título de "O frontend que eu monto quando nenhum endemoniado está discordando de mim". Este título não foi inspirado em nenhuma experiência pessoal em que quis matar outro desenvolvedor que ainda trabalha comigo.
 
+## Stacks
+
+[...]
+
 ## Getting Started
 
 First, run the development server:
