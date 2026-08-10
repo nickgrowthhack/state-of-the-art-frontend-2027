@@ -22,6 +22,8 @@ Um "código imperfeito" é aquele que:
 
 Um "código perfeito" é aquele que pode ser entendido por um iniciante em poucas horas. Um "código imperfeito" é aquele que mesmo um especialista leva semanas para entender.
 
+As convenções deste arquivo estão espelhadas como itens verificáveis em [CHECKLIST.md](CHECKLIST.md), organizado por fluxo de trabalho. **Toda convenção nova entra no CHECKLIST.md no mesmo commit que a estabelece.**
+
 # Gerenciador de pacotes
 
 **pnpm é o único gerenciador de pacotes deste projeto.** `pnpm-lock.yaml` é o único lockfile e vai sempre versionado. Nunca use `npm`, `yarn` ou `bun` — o script `preinstall` aborta a instalação se você tentar, e um `package-lock.json` ou `yarn.lock` no diff é sempre um erro.
