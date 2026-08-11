@@ -76,11 +76,33 @@ O repositório é um monorepo pnpm + Turborepo no layout do template `next-monor
 ```
 
 - **`packages/ui` é o dono do CSS.** `packages/ui/src/styles/globals.css` é a única folha de estilo do repositório; `apps/web` a consome via `import "@workspace/ui/globals.css"` e re-exporta o PostCSS do pacote. Não crie um `globals.css` dentro de `apps/web`.
-- **O campo `exports` do `packages/ui/package.json` é infraestrutura, não conveniência.** É por ele que `@workspace/ui/components/*`, `@workspace/ui/lib/*` e `@workspace/ui/hooks/*` resolvem — tanto para o bundler quanto para o CLI do shadcn, que lê esse mapa para descobrir onde escrever cada arquivo. Mexer nele quebra os dois.
+- **O campo `exports` do `packages/ui/package.json` é infraestrutura, não conveniência.** É por ele que `@workspace/ui/components/*`, `@workspace/ui/lib/*` e `@workspace/ui/hooks/*` resolvem — tanto para o bundler quanto para o CLI do shadcn, que lê esse mapa para descobrir onde escrever cada arquivo. Mexer nele quebra os dois. As entradas existentes não mudam nunca; entrada nova, aditiva, só para a camada de extensão (ver §shadcn/ui: camada pristine e camada de extensão).
 - **Componentes de design system vão em `packages/ui`; composições específicas do app vão em `apps/web/components`.** É essa a divisão que os dois `components.json` codificam: no do app, o alias `ui` aponta para `@workspace/ui/components` e o alias `components` aponta para `@/components`.
 - **`apps/web/AGENTS.md` e `apps/web/CLAUDE.md` são gerados pelo `next dev`** (`agentRules: true` no `next.config.ts`) e ficam ao lado do app, não na raiz. O "project root" da doc do Next é a raiz do **app**: o `AGENTS.md` da raiz do monorepo nunca é tocado. São arquivos versionados: commite-os junto com o seu trabalho em vez de tentar removê-los. A geração depende de o `next dev` enxergar as variáveis de detecção de agente (`AI_AGENT`, `CLAUDECODE` etc.) — a task `dev` do `turbo.json` faz o `passThroughEnv` delas, e removê-lo desliga a geração silenciosamente ao rodar pela raiz. E quando o bloco gerenciado já está atual, o `next dev` não escreve nem loga nada: silêncio é o estado saudável, não um defeito.
 - Cada workspace expõe os mesmos scripts (`lint`, `format`, `typecheck`, e `dev`/`build`/`start` onde faz sentido); o `turbo.json` da raiz é quem os orquestra. Um workspace novo que não expuser esses scripts simplesmente não participa de `pnpm lint` e `pnpm typecheck`.
 - **Em app Next, `typecheck` é `next typegen && tsc --noEmit`.** `PageProps`, `LayoutProps` e `RouteContext` não são tipos importáveis: são globais que o Next gera em `.next/types`. Só o `tsc` sozinho encontra esses globais quando um `next dev` ou `next build` anterior já deixou o diretório para trás — ou seja, passa na máquina de quem programa e falha com `TS2304: Cannot find name 'PageProps'` em qualquer clone frio, que é exatamente o caso do CI. O `next typegen` gera os tipos sem buildar e sai com código diferente de zero em falha, então o `&&` interrompe. Isso é o que mantém o passo de `typecheck` independente da ordem do pipeline.
+
+# shadcn/ui: camada pristine e camada de extensão
+
+Componente shadcn é **código copiado, não dependência** — sem uma fronteira explícita, meses depois ninguém sabe o que é do upstream e o que é de casa. A fronteira deste repositório é por diretório, dentro de `packages/ui/src`:
+
+- **Camada pristine — `components/`, `hooks/` e `lib/`**: tudo que o CLI do shadcn escreve, exatamente como ele escreveu. Nenhuma edição manual, nunca. O único fluxo que muda esses arquivos é o sync abaixo.
+- **Camada de extensão — `ext/`**: todo o código de casa do design system — wrappers, variantes, composições reutilizáveis e componentes net-new. Importada como `@workspace/ui/ext/<nome>`. Segue a mesma anatomia dos componentes pristine (`cva` com export do `*Variants`, primitivas de `react-aria-components`, `data-slot`, `cn()`). Composição específica do app continua em `apps/web/components` — a camada de extensão é design system, não app.
+- **Fora da garantia**: `src/styles/globals.css` (tokens e tema são de casa; divergência esperada — mudanças de CSS do upstream se revisam no sync com `--diff globals.css`) e os `components.json` (config, regida por regra própria: nunca editar).
+
+Direção de dependência: `ext/` importa `components/`; `components/` **nunca** importa `ext/` — o CLI reescreve imports para o alias `ui`, e um import invertido quebraria no próximo sync. Quando existe extensão de um componente, o app importa a extensão, não o pristine por baixo dela.
+
+## Sync com upstream
+
+- Adicionar ou atualizar: `pnpm dlx shadcn@latest add <nome> -c apps/web`. Preview antes: `--dry-run` (lista arquivos) e `--diff [arquivo]`; aceite upstream com `--overwrite`. Nunca buscar arquivo cru do GitHub — o comando `diff` standalone do CLI está deprecado; o fluxo é `add --diff`.
+- Depois do CLI: `pnpm format`, depois `pnpm --filter @workspace/ui run update:pristine`.
+- Commit **dedicado** — `chore(ui): sync <nome> from upstream` — contendo só a saída do CLI, o `pristine.lock.json` e o lockfile do pnpm (se o CLI adicionou dependências). Nunca misturar sync com trabalho de feature: é essa separação que mantém `git log -- packages/ui/src/components` legível como changelog de upstream.
+
+## O manifest `pristine.lock.json`
+
+`packages/ui/pristine.lock.json` registra o sha256 de cada arquivo pristine, e `pnpm check:pristine` (task do turbo, step do CI) falha se qualquer um divergir. Vermelho significa uma de duas coisas: sync legítimo sem atualizar o manifest — rode `pnpm --filter @workspace/ui run update:pristine` e commite junto — ou edição manual de arquivo pristine — reverta; divergência de casa vive em `ext/`. A guarda detecta divergência, não autoria: quem garante que a mudança veio mesmo do CLI é o review do sync commit, cujo diff deve conter só saída de CLI, manifest e lockfile.
+
+O `exports` de `packages/ui/package.json` continua congelado nas entradas existentes; `./ext/*` é a exceção aditiva que codifica esta camada. Entrada nova além dela (ex.: `./ext/hooks/*` quando o primeiro hook de casa nascer) entra no mesmo commit do primeiro arquivo que a exige, nunca antes.
 
 # Tipografia e preset do design system
 

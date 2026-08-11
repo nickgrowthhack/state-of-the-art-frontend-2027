@@ -6,7 +6,9 @@
   "scripts": {
     "lint": "eslint --max-warnings 0",
     "format": "prettier --write \"**/*.{ts,tsx}\"",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "check:pristine": "node scripts/check-pristine.mjs",
+    "update:pristine": "node scripts/check-pristine.mjs --update"
   },
   "dependencies": {
     "@tabler/icons-react": "^3.46.0",
@@ -35,6 +37,7 @@
     "./postcss.config": "./postcss.config.mjs",
     "./lib/*": "./src/lib/*.ts",
     "./components/*": "./src/components/*.tsx",
+    "./ext/*": "./src/ext/*.tsx",
     "./hooks/*": "./src/hooks/*.ts"
   }
 }

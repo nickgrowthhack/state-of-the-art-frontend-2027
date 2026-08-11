@@ -25,6 +25,21 @@
     "typecheck": {
       "dependsOn": ["^typecheck"]
     },
+    "check:pristine": {
+      // Guarda da camada pristine do design system (AGENTS.md §shadcn/ui).
+      // Sem dependsOn (não consome saída de ninguém) e sem outputs (é puro
+      // check). Inputs explícitos, sem $TURBO_DEFAULT$: a task relê só o que
+      // vigia — arquivos pristine, manifest, o próprio script e o package.json
+      // (que define os scripts check/update).
+      "inputs": [
+        "src/components/**",
+        "src/hooks/**",
+        "src/lib/**",
+        "pristine.lock.json",
+        "scripts/check-pristine.mjs",
+        "package.json"
+      ]
+    },
     "dev": {
       "cache": false,
       "persistent": true,

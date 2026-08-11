@@ -29,7 +29,7 @@ commits em inglês, **nunca** push/PR sem instrução do operador, e nunca edita
 | [009](009-spike-vitrine-design-system.md) | Spike: vitrine do design system + dark mode | P3 | M | 003, 007 | REJECTED (substituído pelo 011 — o spike virou porte completo) |
 | [010](010-spike-rota-autenticada-instant.md) | Spike: rota autenticada instantânea | P3 | M‑L | — (após 001–005, recomendado) | TODO |
 | [011](011-catalogo-design-system.md) | Portar o catálogo do design system do alfa-manager-web para a home | P1 | L | 003 (012 antes, recomendado) | TODO |
-| [012](012-camadas-shadcn-pristine-extensao.md) | Camadas do shadcn: pristine × extensão, com guarda no CI | P1 | M | — | TODO |
+| [012](012-camadas-shadcn-pristine-extensao.md) | Camadas do shadcn: pristine × extensão, com guarda no CI | P1 | M | — | DONE (2026-08-11; camada de extensão nomeada `ext` — `packages/ui/src/ext`, `@workspace/ui/ext/<nome>` — por decisão do operador, no lugar de `extensions`; `LinkButton` confirmado upstream via `add --view`, então nada a mover: caminho 2b) |
 
 Valores de status: TODO | IN PROGRESS | DONE | BLOCKED (com motivo em uma
 linha) | REJECTED (com justificativa em uma linha).
@@ -61,8 +61,8 @@ linha) | REJECTED (com justificativa em uma linha).
   `pristine.lock.json` no mesmo commit. Na ordem inversa nada muda no 011, e o
   012 apenas hasheia o conjunto completo.
 - **Drift cruzado 011↔012 é esperado, não STOP**: a checagem de drift do 011
-  cobre `packages/ui` e vai acusar o que o 012 criou (`src/extensions/`,
-  entrada `./extensions/*` no `exports`, `pristine.lock.json`, script); a do
+  cobre `packages/ui` e vai acusar o que o 012 criou (`src/ext/`,
+  entrada `./ext/*` no `exports`, `pristine.lock.json`, script); a do
   012 acusa os componentes que o 011 adicionou. Ambos os planos permanecem
   válidos nas duas ordens.
 - **012 e 007** (soft): ambos tocam o README (§shadcn/ui vs. branding);

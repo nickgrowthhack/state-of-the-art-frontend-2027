@@ -1,0 +1,7 @@
+{
+  "$comment": "Gerado por scripts/check-pristine.mjs --update. Não editar à mão.",
+  "files": {
+    "src/components/button.tsx": "sha256-0f55d1a8aa1ff5c9533389889b77a4c91f40e7a1a8cd6ff14351b47da5c26c36",
+    "src/lib/utils.ts": "sha256-7c8c3dfc0cdd370d44932828eb067ef771c8fe7996693221d5d4b90af6d54f2d"
+  }
+}

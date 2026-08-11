@@ -82,11 +82,15 @@ Contexto fixo: `cacheComponents` e `partialPrefetching` estão ligados no
 - [ ] Componente de `packages/ui` segue a anatomia: `"use client"`, variantes via `cva` com export do `*Variants`, primitivas de `react-aria-components` (não Radix), atributos `data-slot`/`data-variant`/`data-size`, classes via `cn()` — fonte: [packages/ui/src/components/](packages/ui/src/components/) (config)
 - [ ] CSS só em `packages/ui/src/styles/globals.css`; proibido criar `globals.css` em `apps/web` — o app importa `@workspace/ui/globals.css` e re-exporta o PostCSS do pacote — fonte: [AGENTS.md](AGENTS.md) §Estrutura do monorepo
 - [ ] Tailwind v4 CSS-first: sem `tailwind.config.*`; tokens em oklch em `:root`/`.dark` mapeados por `@theme inline`; `@source` cobre `apps/**` e `packages/ui/**` — fonte: [globals.css](packages/ui/src/styles/globals.css) (config)
-- [ ] Não mexer no `exports` de `packages/ui/package.json` — bundler e CLI do shadcn dependem desse mapa — fonte: [AGENTS.md](AGENTS.md) §Estrutura do monorepo
+- [ ] `exports` de `packages/ui/package.json`: entradas existentes congeladas (bundler e CLI do shadcn dependem do mapa); entrada nova só aditiva e só para a camada de extensão — fonte: [AGENTS.md](AGENTS.md) §shadcn/ui: camada pristine e camada de extensão
 - [ ] Os dois `components.json` ficam em sincronia: `style: "aria-lyra"`, `baseColor: "neutral"`, `cssVariables: true`, `iconLibrary: "tabler"`, `rtl: true`, `menuColor: "default-translucent"`, `menuAccent: "subtle"`, `tailwind.config` vazio — fonte: [apps/web/components.json](apps/web/components.json) + [packages/ui/components.json](packages/ui/components.json) (config)
 - [ ] App que consome `@workspace/ui` declara `transpilePackages: ["@workspace/ui"]` — fonte: [next.config.ts](apps/web/next.config.ts) (config)
 - [ ] Fontes seguem a fiação de três camadas: `next/font` só com nomes canônicos (`--font-sans`/`--font-mono`/`--font-heading`) e classe `font-sans` no `<html>` do root layout; `@theme inline` só consome (nunca font-family literal ali); fallbacks literais em `@layer base { :root }` do `globals.css` — fonte: [AGENTS.md](AGENTS.md) §Tipografia e preset do design system
 - [ ] Ao tocar em fonte, tema ou `components.json`: `pnpm dlx shadcn@latest preset resolve -c apps/web --json` **e** `-c packages/ui --json` retornam `"code": "b3uv3ZyQIE"` com `"fallbacks": []` — fonte: [AGENTS.md](AGENTS.md) §Tipografia e preset do design system
+- [ ] Arquivo em `packages/ui/src/{components,hooks,lib}` (camada pristine) nunca é editado à mão: só o fluxo de sync via CLI escreve ali, em commit dedicado `chore(ui): sync <nome> from upstream` com `pristine.lock.json` atualizado no mesmo commit — fonte: [AGENTS.md](AGENTS.md) §shadcn/ui: camada pristine e camada de extensão
+- [ ] Divergência de casa no design system (wrapper, variante, composição, componente net-new) vai em `packages/ui/src/ext`, importada como `@workspace/ui/ext/<nome>`, com a mesma anatomia dos componentes pristine — fonte: [AGENTS.md](AGENTS.md) §shadcn/ui: camada pristine e camada de extensão
+- [ ] Direção de import: `ext/` importa `components/`; `components/` nunca importa `ext/`; quando existe extensão de um componente, o app importa a extensão — fonte: [AGENTS.md](AGENTS.md) §shadcn/ui: camada pristine e camada de extensão
+- [ ] Sync de upstream: preview com `pnpm dlx shadcn@latest add <nome> --dry-run`/`--diff` (nunca fetch cru do GitHub), aceite com `--overwrite`, depois `pnpm format` e `pnpm --filter @workspace/ui run update:pristine` — fonte: [AGENTS.md](AGENTS.md) §shadcn/ui: camada pristine e camada de extensão
 
 ## 6. Ao escrever ou alterar um teste E2E (instant)
 
@@ -126,7 +130,7 @@ Contexto fixo: `cacheComponents` e `partialPrefetching` estão ligados no
 - [ ] Workflow único: job `verify` em `ubuntu-latest`, gatilhos `push` e `pull_request` em `main` — fonte: [ci.yml](.github/workflows/ci.yml) (config)
 - [ ] `pnpm/action-setup@v4` **sem** o input `version` (herda de `packageManager`) e **antes** de `actions/setup-node@v4` (`node-version: 22`, `cache: pnpm`) — fonte: comentários no [ci.yml](.github/workflows/ci.yml) (config)
 - [ ] Instalação sempre com `pnpm install --frozen-lockfile` — fonte: [AGENTS.md](AGENTS.md) §Comandos canônicos
-- [ ] Ordem do pipeline: install → lint → typecheck → build → instalação de browser → test:e2e — fonte: [ci.yml](.github/workflows/ci.yml) (config)
+- [ ] Ordem do pipeline: install → lint → typecheck → check:pristine → build → instalação de browser → test:e2e — fonte: [ci.yml](.github/workflows/ci.yml) (config)
 - [ ] Cada passo é autossuficiente: nenhum depende de artefato deixado por um passo anterior. O `typecheck` vem antes do `build` e gera os próprios tipos de rota (ver §3) — fonte: [ci.yml](.github/workflows/ci.yml) (config)
 - [ ] Browser escopado e mínimo: `pnpm --filter web exec playwright install --with-deps chromium` — fonte: [ci.yml](.github/workflows/ci.yml) (config)
 - [ ] O build duplo é intencional: `pnpm build` valida o artefato **sem** `NEXT_E2E`; o `webServer` do e2e rebuilda com a flag (ver §6) — fonte: comentários no [turbo.json](turbo.json) e no [ci.yml](.github/workflows/ci.yml) (config)
