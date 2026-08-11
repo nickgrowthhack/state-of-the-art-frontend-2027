@@ -3,19 +3,22 @@ import { Geist, Geist_Mono } from "next/font/google"
 import "@workspace/ui/globals.css"
 import { cn } from "@workspace/ui/lib/utils"
 
-const geistMonoHeading = Geist_Mono({
-  subsets: ["latin"],
-  variable: "--font-heading",
-})
-
+// Só os nomes canônicos (--font-sans/--font-mono/--font-heading) existem para
+// o tema do design system e para o resolvedor de preset do shadcn — qualquer
+// outro nome é ignorado por ambos (ver AGENTS.md §Tipografia e preset).
 const geistSans = Geist({
-  variable: "--font-geist-sans",
   subsets: ["latin"],
+  variable: "--font-sans",
 })
 
 const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
   subsets: ["latin"],
+  variable: "--font-mono",
+})
+
+const geistMonoHeading = Geist_Mono({
+  subsets: ["latin"],
+  variable: "--font-heading",
 })
 
 export const metadata: Metadata = {
@@ -34,6 +37,7 @@ export default function RootLayout({
       className={cn(
         "h-full",
         "antialiased",
+        "font-sans",
         geistSans.variable,
         geistMono.variable,
         geistMonoHeading.variable

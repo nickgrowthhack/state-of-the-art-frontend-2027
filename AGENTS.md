@@ -82,6 +82,18 @@ O repositório é um monorepo pnpm + Turborepo no layout do template `next-monor
 - Cada workspace expõe os mesmos scripts (`lint`, `format`, `typecheck`, e `dev`/`build`/`start` onde faz sentido); o `turbo.json` da raiz é quem os orquestra. Um workspace novo que não expuser esses scripts simplesmente não participa de `pnpm lint` e `pnpm typecheck`.
 - **Em app Next, `typecheck` é `next typegen && tsc --noEmit`.** `PageProps`, `LayoutProps` e `RouteContext` não são tipos importáveis: são globais que o Next gera em `.next/types`. Só o `tsc` sozinho encontra esses globais quando um `next dev` ou `next build` anterior já deixou o diretório para trás — ou seja, passa na máquina de quem programa e falha com `TS2304: Cannot find name 'PageProps'` em qualquer clone frio, que é exatamente o caso do CI. O `next typegen` gera os tipos sem buildar e sai com código diferente de zero em falha, então o `&&` interrompe. Isso é o que mantém o passo de `typecheck` independente da ordem do pipeline.
 
+# Tipografia e preset do design system
+
+O preset canônico do design system é **`b3uv3ZyQIE`**. A verificação é de ida-e-volta: `pnpm dlx shadcn@latest preset resolve -c apps/web --json` e `pnpm dlx shadcn@latest preset resolve -c packages/ui --json` devem retornar exatamente esse código **com `fallbacks: []`**. Um item em `fallbacks` significa que o resolvedor não detectou aquele valor no projeto e caiu no default do style — o código pode até coincidir por sorte, mas isso não é detecção, é acaso.
+
+A fiação de fontes que sustenta esse ciclo tem três camadas, cada uma com um papel:
+
+- **O app define.** `apps/web/app/layout.tsx` carrega as fontes via `next/font` com os nomes canônicos `--font-sans`, `--font-mono` e `--font-heading`, e aplica a classe `font-sans` no `<html>`. O resolvedor do shadcn descarta qualquer variável fora do conjunto `--font-sans`/`--font-serif`/`--font-mono`/`--font-heading` — foi o drift para `--font-geist-*` (padrão do create-next-app) que quebrou tanto o preset quanto a renderização da Geist.
+- **O tema consome.** O `@theme inline` do `globals.css` mapeia token → variável de runtime (`--font-sans: var(--font-sans)` etc.). Nunca coloque font-family literal aí: com `inline`, o valor congela dentro das utilities e o next/font perde a vez.
+- **Os fallbacks literais** (`"Geist"`, `"Geist Mono"`) vivem em `@layer base { :root }` do `globals.css`. São eles que o `preset resolve` lê em `packages/ui` — workspace sem layout para varrer — e o que vale para consumidores fora do Next; é o mesmo padrão que o próprio shadcn gera em projetos CSS-only. Dentro do app, as declarações do next/font vencem por serem sem camada (unlayered ganha de `@layer`, independentemente de ordem e especificidade).
+
+`shadcn apply --preset` **não conserta** drift de nome de variável — ele reformata o que reconhece e ignora o resto (verificado). Se o `resolve` divergir do código canônico, a correção é manual, nesta fiação.
+
 # Renderização
 
 **`cacheComponents` está ligado** no `apps/web/next.config.ts`. A regra que sai disso é uma só: *o que é estático pinta imediatamente; o que depende do request fica abaixo de um `<Suspense>`.* A parte prerenderizada de uma rota é o **shell estático** — é ela que entra no prefetch e aparece antes de qualquer resposta do servidor.

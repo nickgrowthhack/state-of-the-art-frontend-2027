@@ -4,7 +4,9 @@ Gerados pela skill `improve` em 2026-08-10, contra o commit `3870aff` (auditoria
 completa: 100% do código-fonte lido, `pnpm audit` limpo, sem achados de
 segurança). O usuário selecionou todos os grupos de achados. O plano 011 foi
 adicionado em 2026-08-11, contra o commit `7ad2cd7` (variante `plan` da skill,
-pedido direto do operador), e **substitui o 009**. Execute na ordem
+pedido direto do operador), e **substitui o 009**. O plano 012 foi adicionado
+em 2026-08-11, contra o commit `08e6576` (variante `plan`, pedido direto do
+operador). Execute na ordem
 abaixo, salvo onde as dependências digam outra coisa. Cada executor: leia o
 plano inteiro antes de começar, honre as condições de STOP, e atualize a sua
 linha ao terminar.
@@ -19,7 +21,7 @@ commits em inglês, **nunca** push/PR sem instrução do operador, e nunca edita
 |-------|--------|------------|---------|------------|--------|
 | [001](001-lint-que-morde.md) | Tornar o lint um gate real | P1 | S | — | DONE (2026-08-11, os 4 passos como escritos; zero violações preexistentes — ver nota de status no plano) |
 | [002](002-format-check-e-ci.md) | `format:check` no CI + cache de browsers | P1 | S | — (após 001, recomendado) | TODO |
-| [003](003-fiacao-de-fontes.md) | Fiação de fontes (Geist nunca renderiza) | P1 | S | — | TODO |
+| [003](003-fiacao-de-fontes.md) | Fiação de fontes (Geist nunca renderiza) | P1 | S | — | DONE (2026-08-11, no formato canônico do scaffold shadcn — ver nota de status no plano; corrige também o `preset resolve` para `b3uv3ZyQIE` nos dois workspaces) |
 | [004](004-docs-de-skills.md) | SKILLS.md/README verdadeiros sobre skills | P2 | S | — | TODO |
 | [005](005-source-globs-globals-css.md) | Remover `@source` mortos do globals.css | P2 | S | — | TODO |
 | [006](006-higiene-deps-e-configs.md) | Higiene: `@types/node`, tsconfig morto, dep órfã | P2 | S | — | TODO |
@@ -27,7 +29,8 @@ commits em inglês, **nunca** push/PR sem instrução do operador, e nunca edita
 | [008](008-convencao-teste-unitario.md) | Convenção de teste unitário (vitest) | P2 | M | — | TODO |
 | [009](009-spike-vitrine-design-system.md) | Spike: vitrine do design system + dark mode | P3 | M | 003, 007 | REJECTED (substituído pelo 011 — o spike virou porte completo) |
 | [010](010-spike-rota-autenticada-instant.md) | Spike: rota autenticada instantânea | P3 | M‑L | — (após 001–005, recomendado) | TODO |
-| [011](011-catalogo-design-system.md) | Portar o catálogo do design system do alfa-manager-web para a home | P1 | L | 003 | TODO |
+| [011](011-catalogo-design-system.md) | Portar o catálogo do design system do alfa-manager-web para a home | P1 | L | 003 (012 antes, recomendado) | TODO |
+| [012](012-camadas-shadcn-pristine-extensao.md) | Camadas do shadcn: pristine × extensão, com guarda no CI | P1 | M | — | TODO |
 
 Valores de status: TODO | IN PROGRESS | DONE | BLOCKED (com motivo em uma
 linha) | REJECTED (com justificativa em uma linha).
@@ -51,6 +54,20 @@ linha) | REJECTED (com justificativa em uma linha).
 - **008 é independente**, mas se landar antes de 011, os componentes novos de
   `apps/web/components/` já nascem com a convenção de teste (o plano 011 cobra
   isso na nota de manutenção).
+- **012 antes do 011** (soft, recomendado): o porte do catálogo adiciona ~54
+  componentes pristine e vendoriza cards que os consomem — com a guarda do 012
+  no ar, todo esse trabalho acontece protegido. O 011 foi escrito antes do 012
+  e não menciona o manifest: seu `shadcn add` em massa (passo 1) deve fechar
+  com `pnpm format` + `pnpm --filter @workspace/ui run update:pristine`, com o
+  `pristine.lock.json` no mesmo commit. Na ordem inversa nada muda no 011, e o
+  012 apenas hasheia o conjunto completo.
+- **Drift cruzado 011↔012 é esperado, não STOP**: a checagem de drift do 011
+  cobre `packages/ui` e vai acusar o que o 012 criou (`src/extensions/`,
+  entrada `./extensions/*` no `exports`, `pristine.lock.json`, script); a do
+  012 acusa os componentes que o 011 adicionou. Ambos os planos permanecem
+  válidos nas duas ordens.
+- **012 e 007** (soft): ambos tocam o README (§shadcn/ui vs. branding);
+  qualquer ordem, resolvendo a copy no merge.
 
 ## Achados considerados e rejeitados
 

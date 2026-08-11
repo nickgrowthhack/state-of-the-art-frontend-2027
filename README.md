@@ -13,7 +13,7 @@ Dito isso, se você está lendo isso, a essa altura, já devo ter publicado um p
 - **Tailwind CSS** `4.3.3` — configuração CSS-first, sem `tailwind.config.*`; folha única em [packages/ui/src/styles/globals.css](packages/ui/src/styles/globals.css), consumida pelo app como `@workspace/ui/globals.css`
 - **@tailwindcss/postcss** `4.3.3` — único plugin do [packages/ui/postcss.config.mjs](packages/ui/postcss.config.mjs), que [apps/web/postcss.config.mjs](apps/web/postcss.config.mjs) re-exporta
 - **Turbopack** — bundler padrão do Next.js 16, em dev e em build (sem opt-in)
-- **next/font** — **Geist** e **Geist Mono** auto-hospedadas, expostas como `--font-geist-sans` / `--font-geist-mono` em [apps/web/app/layout.tsx](apps/web/app/layout.tsx)
+- **next/font** — **Geist** e **Geist Mono** auto-hospedadas em [apps/web/app/layout.tsx](apps/web/app/layout.tsx), expostas pelos nomes canônicos `--font-sans` / `--font-mono` / `--font-heading` que o tema do design system consome; fallbacks literais no `@layer base` do [globals.css](packages/ui/src/styles/globals.css) mantêm o preset `b3uv3ZyQIE` resolvível nos dois workspaces
 - **next/image** — otimização de imagens, usado em [apps/web/app/page.tsx](apps/web/app/page.tsx)
 - **ESLint** `9.39.5` — flat config; cada workspace importa o preset que lhe cabe de [packages/eslint-config/](packages/eslint-config/)
 - **eslint-config-next** `16.3.0` — presets `core-web-vitals` + `typescript`, base do `@workspace/eslint-config/next-js`

@@ -26,6 +26,7 @@ corrige por conta própria: registra-se em
 - [ ] `preinstall: "npx only-allow pnpm"` intacto — fonte: [package.json](package.json) (config)
 - [ ] `pnpm-workspace.yaml` declara apenas `apps/*` e `packages/*` — fonte: [pnpm-workspace.yaml](pnpm-workspace.yaml) (config)
 - [ ] O layout segue o template `next-monorepo` do shadcn — o que `shadcn init --monorepo` espera encontrar — fonte: [AGENTS.md](AGENTS.md) §Estrutura do monorepo
+- [ ] O preset canônico do design system é `b3uv3ZyQIE`; a réplica fecha o ciclo com `preset resolve` nos dois workspaces (ver §5) — fonte: [AGENTS.md](AGENTS.md) §Tipografia e preset do design system
 - [ ] A raiz só orquestra: todo script é `turbo <task>` e as devDependencies se limitam a turbo, prettier + plugin tailwind, typescript e `@workspace/*` — fonte: [AGENTS.md](AGENTS.md) §Comandos canônicos
 - [ ] `CLAUDE.md` da raiz contém apenas `@AGENTS.md` — fonte: [CLAUDE.md](CLAUDE.md) (config)
 - [ ] `.gitignore` cobre `.turbo`, `dist`, `.env*` e os artefatos do Playwright (`test-results`, `playwright-report`, `blob-report`, `.playwright`) — fonte: [.gitignore](.gitignore) (config)
@@ -85,6 +86,8 @@ Contexto fixo: `cacheComponents` e `partialPrefetching` estão ligados no
 - [ ] Não mexer no `exports` de `packages/ui/package.json` — bundler e CLI do shadcn dependem desse mapa — fonte: [AGENTS.md](AGENTS.md) §Estrutura do monorepo
 - [ ] Os dois `components.json` ficam em sincronia: `style: "aria-lyra"`, `baseColor: "neutral"`, `cssVariables: true`, `iconLibrary: "tabler"`, `rtl: true`, `menuColor: "default-translucent"`, `menuAccent: "subtle"`, `tailwind.config` vazio — fonte: [apps/web/components.json](apps/web/components.json) + [packages/ui/components.json](packages/ui/components.json) (config)
 - [ ] App que consome `@workspace/ui` declara `transpilePackages: ["@workspace/ui"]` — fonte: [next.config.ts](apps/web/next.config.ts) (config)
+- [ ] Fontes seguem a fiação de três camadas: `next/font` só com nomes canônicos (`--font-sans`/`--font-mono`/`--font-heading`) e classe `font-sans` no `<html>` do root layout; `@theme inline` só consome (nunca font-family literal ali); fallbacks literais em `@layer base { :root }` do `globals.css` — fonte: [AGENTS.md](AGENTS.md) §Tipografia e preset do design system
+- [ ] Ao tocar em fonte, tema ou `components.json`: `pnpm dlx shadcn@latest preset resolve -c apps/web --json` **e** `-c packages/ui --json` retornam `"code": "b3uv3ZyQIE"` com `"fallbacks": []` — fonte: [AGENTS.md](AGENTS.md) §Tipografia e preset do design system
 
 ## 6. Ao escrever ou alterar um teste E2E (instant)
 

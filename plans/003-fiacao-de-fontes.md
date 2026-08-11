@@ -19,6 +19,16 @@
 - **Depende de**: nenhum
 - **Categoria**: bug
 - **Planejado em**: commit `3870aff`, 2026-08-10
+- **DONE em 2026-08-11**, a pedido direto do operador, junto com a correção do
+  preset `b3uv3ZyQIE` (os dois `preset resolve` divergiam do código canônico
+  pela mesma causa raiz). A execução seguiu o **formato canônico do scaffold do
+  shadcn** em vez dos passos 2–3 deste plano: **3** instâncias `next/font` com
+  nomes canônicos (`--font-sans`, `--font-mono`, `--font-heading`) + classe
+  `font-sans` no `<html>` + fallbacks literais em `@layer base { :root }` do
+  `globals.css` — sem remap `--font-heading: var(--font-mono)` no tema. O
+  vermelho→verde do spec descartável (passos 1 e 4) foi executado como escrito.
+  Racional e convenção resultante: AGENTS.md §Tipografia e preset do design
+  system; itens correspondentes no CHECKLIST.md §1 e §5.
 
 ## Por que isso importa
 

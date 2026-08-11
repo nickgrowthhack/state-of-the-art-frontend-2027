@@ -120,8 +120,20 @@
 }
 
 @layer base {
+  :root {
+    /* Fallbacks literais de tipografia: packages/ui não tem layout para o CLI
+       do shadcn varrer, então é daqui que `preset resolve` lê as fontes — e é
+       o que vale para consumidores fora do Next. Dentro do app, as declarações
+       do next/font vencem por serem sem camada (unlayered > @layer). */
+    --font-sans: "Geist", ui-sans-serif, system-ui, sans-serif;
+    --font-mono: "Geist Mono", ui-monospace, monospace;
+    --font-heading: "Geist Mono", ui-monospace, monospace;
+  }
   * {
     @apply border-border outline-ring/50;
+    }
+  html {
+    @apply font-sans;
     }
   body {
     @apply bg-background text-foreground;
