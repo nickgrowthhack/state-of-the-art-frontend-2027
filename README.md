@@ -30,12 +30,6 @@ Parte da minha estratégia de design system é criar uma separação entre a **
 
 Isso resolve um problema estrutural do shadcn: ele é um **código copiado, não dependência** — que sem a devida organização, meses depois ninguém sabe dizer o que é do shadcn propriamente e o que é de casa.
 
-Manter `packages/ui` pristine te dá uma estrutura sólida que serve de base de comparação (capacidade de fazer diff com o upstream).## shadcn/ui
-
-Parte da minha estratégia de design system é criar uma separação entre a **camada de upstream (pristine)** e a **camada de extensão**, isto é, manter uma camada o mais fiel possível à origem, para que ela continue atualizável, e empurrar todas as divergências que criamos a partir dela para uma camada acima.
-
-Isso resolve um problema estrutural do shadcn: ele é um **código copiado, não dependência** — que sem a devida organização, meses depois ninguém sabe dizer o que é do shadcn propriamente e o que é de casa.
-
 Manter `packages/ui` pristine te dá uma estrutura sólida que serve de base de comparação (capacidade de fazer diff com o upstream).
 
 ## Getting Started
