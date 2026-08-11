@@ -4,22 +4,6 @@ Confesso ter bastante ciúmes desta estrutura organizacional e estou, na verdade
 
 Dito isso, se você está lendo isso, a essa altura, já devo ter publicado um post no meu blog pessoal, a título de "O frontend que eu monto quando nenhum endemoniado está discordando de mim". Este título não foi inspirado em nenhuma experiência pessoal em que quis matar outro desenvolvedor que ainda trabalha comigo.
 
-## Estrutura
-
-Monorepo pnpm + Turborepo, no layout que o `shadcn init --monorepo` espera:
-
-```
-.
-├── apps/
-│   └── web/                    # o app Next.js
-└── packages/
-    ├── ui/                     # @workspace/ui — design system e a única folha de estilo
-    ├── eslint-config/          # @workspace/eslint-config
-    └── typescript-config/      # @workspace/typescript-config
-```
-
-As regras que valem para mexer aqui — o que mora em qual workspace, por que o `exports` de `@workspace/ui` é infraestrutura e como adicionar dependência sem errar o `package.json` — estão no [AGENTS.md](AGENTS.md).
-
 ## Stacks
 
 - **Next.js** `16.3.0` — App Router, React Server Components por padrão, em [apps/web](apps/web)
@@ -40,11 +24,19 @@ As regras que valem para mexer aqui — o que mora em qual workspace, por que o 
 - **@types/node** `20.19.43`
 - **pnpm** `10.22.0` — workspaces declarados em [pnpm-workspace.yaml](pnpm-workspace.yaml); `pnpm-lock.yaml` é o único lockfile do repo, a versão é fixada pelo campo `packageManager` e o `preinstall` bloqueia npm/yarn/bun
 
-## Skills
+## shadcn/ui
 
-As skills vivem em [.agents/skills/](.agents/skills/) e são fixadas por [skills-lock.json](skills-lock.json): `agent-browser`, `improve`, `next-cache-components-adoption`, `next-cache-components-optimizer`, `next-dev-loop`, `next-partial-prefetching-adoption`, `vercel-react-best-practices`.
+Parte da minha estratégia de design system é criar uma separação entre a **camada de upstream (pristine)** e a **camada de extensão**, isto é, manter uma camada o mais fiel possível à origem, para que ela continue atualizável, e empurrar todas as divergências que criamos a partir dela para uma camada acima.
 
-O que cada uma faz e por que está aqui: [SKILLS.md](SKILLS.md).
+Isso resolve um problema estrutural do shadcn: ele é um **código copiado, não dependência** — que sem a devida organização, meses depois ninguém sabe dizer o que é do shadcn propriamente e o que é de casa.
+
+Manter `packages/ui` pristine te dá uma estrutura sólida que serve de base de comparação (capacidade de fazer diff com o upstream).## shadcn/ui
+
+Parte da minha estratégia de design system é criar uma separação entre a **camada de upstream (pristine)** e a **camada de extensão**, isto é, manter uma camada o mais fiel possível à origem, para que ela continue atualizável, e empurrar todas as divergências que criamos a partir dela para uma camada acima.
+
+Isso resolve um problema estrutural do shadcn: ele é um **código copiado, não dependência** — que sem a devida organização, meses depois ninguém sabe dizer o que é do shadcn propriamente e o que é de casa.
+
+Manter `packages/ui` pristine te dá uma estrutura sólida que serve de base de comparação (capacidade de fazer diff com o upstream).
 
 ## Getting Started
 
