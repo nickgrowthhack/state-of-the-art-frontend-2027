@@ -2,11 +2,10 @@
 
 Índice verificável de todas as convenções deste boilerplate, organizado por
 fluxo de trabalho. A prosa e o porquê de cada regra vivem no
-[AGENTS.md](AGENTS.md), no [instant-nav.rig.md](apps/web/instant-nav.rig.md) e
-no [SKILLS.md](SKILLS.md) — este arquivo só carrega o **o quê**, em itens que um
-revisor confere olhando o diff ou rodando um comando. Itens marcados com
-`(config)` não têm prosa em lugar nenhum: o arquivo de configuração citado é a
-própria fonte de verdade.
+[AGENTS.md](AGENTS.md) e no [instant-nav.rig.md](apps/web/instant-nav.rig.md) —
+este arquivo só carrega o **o quê**, em itens que um revisor confere olhando
+o diff ou rodando um comando. Itens marcados com `(config)` não têm prosa em
+lugar nenhum: o arquivo de configuração citado é a própria fonte de verdade.
 
 **Como usar:** antes de uma tarefa, localize a(s) seção(ões) do fluxo
 correspondente e percorra os itens. As caixas nunca são marcadas neste arquivo:
@@ -16,7 +15,7 @@ diff deste arquivo é erro.
 **Manutenção:** toda convenção nova entra neste arquivo **no mesmo commit que a
 estabelece**. Inconsistência encontrada entre documentação e código não se
 corrige por conta própria: registra-se em
-[Pendências / decisões em aberto](#11-pendências--decisões-em-aberto).
+[Pendências / decisões em aberto](#10-pendências--decisões-em-aberto).
 
 ## 1. Ao dar bootstrap ou replicar o boilerplate
 
@@ -133,15 +132,7 @@ Contexto fixo: `cacheComponents` e `partialPrefetching` estão ligados no
 - [ ] O build duplo é intencional: `pnpm build` valida o artefato **sem** `NEXT_E2E`; o `webServer` do e2e rebuilda com a flag (ver §6) — fonte: comentários no [turbo.json](turbo.json) e no [ci.yml](.github/workflows/ci.yml) (config)
 - [ ] Condicionais de CI moram no `playwright.config.ts`: `forbidOnly` e reporter `github` só sob `CI`; `reuseExistingServer: !CI` — fonte: [playwright.config.ts](apps/web/playwright.config.ts) (config)
 
-## 9. Ao adicionar, atualizar ou remover uma skill
-
-- [ ] Skill vendorizada em `.agents/skills/` e versionada junto com o código — fonte: [SKILLS.md](SKILLS.md)
-- [ ] Entrada no `skills-lock.json` (`source`, `skillPath`, `computedHash`) atualizada no mesmo commit — fonte: [SKILLS.md](SKILLS.md)
-- [ ] Justificativa ("o que faz" / "por que está aqui") registrada no SKILLS.md; skill sem justificativa é removida — fonte: [SKILLS.md](SKILLS.md)
-- [ ] `.claude/skills/` é o espelho gerado para o Claude Code, não a fonte (estado atual diverge — ver §11) — fonte: [SKILLS.md](SKILLS.md)
-- [ ] Atualização de upstream aparece como novo `computedHash` no diff do lock — fonte: [SKILLS.md](SKILLS.md)
-
-## 10. Antes de commitar (qualquer fluxo)
+## 9. Antes de commitar (qualquer fluxo)
 
 - [ ] `pnpm lint` e `pnpm typecheck` verdes na raiz; `pnpm test:e2e` se o commit toca rota ou teste — fonte: [AGENTS.md](AGENTS.md) §Comandos canônicos
 - [ ] Nenhum `package-lock.json`/`yarn.lock` no diff — fonte: [AGENTS.md](AGENTS.md) §Gerenciador de pacotes
@@ -151,14 +142,13 @@ Contexto fixo: `cacheComponents` e `partialPrefetching` estão ligados no
 - [ ] Justificativas exigidas presentes em comentário: `'force-disabled'`, `<Link prefetch={true}>`, `connection()` — fonte: [AGENTS.md](AGENTS.md) §Renderização e §Prefetch parcial
 - [ ] Convenção nova estabelecida neste commit tem item correspondente adicionado a este arquivo — fonte: cabeçalho deste arquivo
 
-## 11. Pendências / decisões em aberto
+## 10. Pendências / decisões em aberto
 
 Inconsistências doc↔código registradas na auditoria de 2026-08 (histórico de
 commits + skill `improve`, que gerou os planos numerados em [plans/](plans/)).
 Nada foi corrigido deliberadamente; cada item aguarda decisão ou a execução do
 plano correspondente.
 
-- **`.claude/skills/` está rastreado no git** (107 arquivos) enquanto o SKILLS.md afirma que o espelho não é versionado → [plans/004-docs-de-skills.md](plans/004-docs-de-skills.md)
 - **O script `format` cobre só `**/*.{ts,tsx}`** e não existe `format:check`; `apps/web/eslint.config.js` viola o `.prettierrc` (ponto e vírgula) → [plans/002-format-check-e-ci.md](plans/002-format-check-e-ci.md)
 - **`packages/eslint-config` e `packages/typescript-config` não expõem script nenhum**, contra a regra "todo workspace expõe os mesmos scripts" → follow-up registrado na nota de manutenção do [plans/002-format-check-e-ci.md](plans/002-format-check-e-ci.md)
 - **`packages/ui/tsconfig.lint.json` está morto** (nada o referencia; inclui diretório inexistente), **`@types/node@^20` contradiz `engines >=22`** e **`@tabler/icons-react` está declarado sem nenhum import** → [plans/006-higiene-deps-e-configs.md](plans/006-higiene-deps-e-configs.md)

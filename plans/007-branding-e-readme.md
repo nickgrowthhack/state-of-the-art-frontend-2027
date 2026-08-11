@@ -103,7 +103,7 @@ são o que aparece em aba, busca e embed social.
 - `apps/web/app/demo/**` — já está com branding correto.
 - Usar componentes de `@workspace/ui` na home — isso é o spike do plano 009;
   aqui a home continua com Tailwind cru, só que com conteúdo próprio.
-- `AGENTS.md`, `SKILLS.md`.
+- `AGENTS.md`.
 
 ## Fluxo de git
 

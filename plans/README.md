@@ -22,7 +22,6 @@ commits em inglês, **nunca** push/PR sem instrução do operador, e nunca edita
 | [001](001-lint-que-morde.md) | Tornar o lint um gate real | P1 | S | — | DONE (2026-08-11, os 4 passos como escritos; zero violações preexistentes — ver nota de status no plano) |
 | [002](002-format-check-e-ci.md) | `format:check` no CI + cache de browsers | P1 | S | — (após 001, recomendado) | TODO |
 | [003](003-fiacao-de-fontes.md) | Fiação de fontes (Geist nunca renderiza) | P1 | S | — | DONE (2026-08-11, no formato canônico do scaffold shadcn — ver nota de status no plano; corrige também o `preset resolve` para `b3uv3ZyQIE` nos dois workspaces) |
-| [004](004-docs-de-skills.md) | SKILLS.md/README verdadeiros sobre skills | P2 | S | — | TODO |
 | [005](005-source-globs-globals-css.md) | Remover `@source` mortos do globals.css | P2 | S | — | TODO |
 | [006](006-higiene-deps-e-configs.md) | Higiene: `@types/node`, tsconfig morto, dep órfã | P2 | S | — | TODO |
 | [007](007-branding-e-readme.md) | Tirar o branding de boilerplate | P2 | S | 003 | TODO |
