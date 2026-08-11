@@ -27,7 +27,32 @@
     },
     "dev": {
       "cache": false,
-      "persistent": true
+      "persistent": true,
+      // O `next dev` gera/atualiza apps/web/AGENTS.md quando detecta um AI
+      // agent pelo ambiente (via @vercel/detect-agent). Como o turbo filtra o
+      // ambiente por padrão, sem este repasse a detecção nunca dispara ao rodar
+      // `pnpm dev` pela raiz — só rodando `next dev` dentro do app. A lista
+      // espelha os sinais que o detect-agent consulta.
+      "passThroughEnv": [
+        "AI_AGENT",
+        "CURSOR_TRACE_ID",
+        "CURSOR_AGENT",
+        "CURSOR_EXTENSION_HOST_ROLE",
+        "GEMINI_CLI",
+        "CODEX_SANDBOX",
+        "CODEX_CI",
+        "CODEX_THREAD_ID",
+        "ANTIGRAVITY_AGENT",
+        "AUGMENT_AGENT",
+        "OPENCODE_CLIENT",
+        "CLAUDECODE",
+        "CLAUDE_CODE",
+        "CLAUDE_CODE_IS_COWORK",
+        "REPL_ID",
+        "COPILOT_MODEL",
+        "COPILOT_ALLOW_ALL",
+        "COPILOT_GITHUB_TOKEN"
+      ]
     },
     "test:e2e": {
       "dependsOn": ["^build"],

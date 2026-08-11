@@ -112,6 +112,7 @@ Contexto fixo: `cacheComponents` e `partialPrefetching` estão ligados no
 - [ ] Prettier único na raiz: `semi: false`, aspas duplas, `printWidth: 80`, `trailingComma: "es5"`, `endOfLine: "lf"`, `tailwindStylesheet` ancorado no globals.css do ui, `tailwindFunctions: ["cn", "cva"]` — fonte: [.prettierrc](.prettierrc) (config)
 - [ ] Task nova no turbo.json: `dependsOn: ["^<task>"]` quando consome saída de dependências; `cache: false` + `persistent: true` em processo de longa duração (`dev`, `start`); `outputs` do build = `.next/**` menos `.next/cache/**` — fonte: [turbo.json](turbo.json) (config)
 - [ ] Variável que altera o artefato entra em `env` da task (ex.: `NEXT_E2E` no build); variável específica da máquina entra em `passThroughEnv` (ex.: `PLAYWRIGHT_BROWSERS_PATH` no `test:e2e`) — fonte: comentários no [turbo.json](turbo.json) (config)
+- [ ] A task `dev` mantém o `passThroughEnv` com as variáveis de detecção de AI agent (`AI_AGENT`, `CLAUDECODE` etc.); remover qualquer uma desliga silenciosamente a geração de `apps/web/AGENTS.md` ao rodar `pnpm dev` pela raiz — fonte: [AGENTS.md](AGENTS.md) §Estrutura do monorepo + comentário no [turbo.json](turbo.json)
 - [ ] Decisão não óbvia de task fica registrada como comentário JSONC no próprio turbo.json — fonte: [turbo.json](turbo.json) (config)
 - [ ] Artefato novo de ferramenta entra no `.gitignore` (e no `.prettierignore` quando for conteúdo gerado) — fonte: [.gitignore](.gitignore) + [.prettierignore](.prettierignore) (config)
 
