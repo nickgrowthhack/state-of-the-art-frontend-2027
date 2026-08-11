@@ -1,3 +1,4 @@
+import eslintConfigPrettier from "eslint-config-prettier"
 import nextVitals from "eslint-config-next/core-web-vitals"
 import nextTs from "eslint-config-next/typescript"
 
@@ -19,4 +20,7 @@ export const nextJsConfig = [
   {
     ignores: [".next/**", "out/**", "build/**", "next-env.d.ts"],
   },
+  // Sempre por último: desliga as regras estilísticas que conflitam com o
+  // Prettier, inclusive as que `eslint-config-next` adiciona acima.
+  eslintConfigPrettier,
 ]

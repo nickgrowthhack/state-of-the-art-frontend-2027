@@ -13,6 +13,21 @@
 
 ## Status
 
+**DONE em 2026-08-11.** Os 4 passos foram executados como escritos, sem desvio.
+O `pnpm lint` com `--max-warnings 0` passou de primeira: **zero violações
+preexistentes**, então a condição de STOP das "~10 ocorrências" não chegou a ser
+testada. O diferencial do passo 4 confirmou o gate mordendo — com
+`const naoUsada = 1` semeada, o ESLint reportou `1 problem (0 errors, 1 warning)`
+seguido de `ESLint found too many warnings (maximum: 0)` e saiu com código 1.
+Esse "0 errors" é a prova de que o `only-warn` continua ativo e de que quem faz
+o gate morder é a flag — o par descrito em "Estado atual", não um dos dois
+sozinho.
+
+Contexto de execução: veio junto com a correção do `typecheck` do CI
+(`next typegen && tsc --noEmit`), que era a causa real de o
+`CI / verify` falhar em todo push desde `eed631f`. Aquele foi o commit anterior;
+este plano é o segundo commit da mesma tarefa.
+
 - **Prioridade**: P1
 - **Esforço**: S
 - **Risco**: LOW

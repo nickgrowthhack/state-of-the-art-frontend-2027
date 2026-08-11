@@ -106,7 +106,9 @@ Contexto fixo: `cacheComponents` e `partialPrefetching` estão ligados no
 ## 7. Ao mexer em tooling (ESLint, TypeScript, Prettier, Turbo)
 
 - [ ] ESLint é flat config e o `eslint.config.js` de cada workspace apenas reexporta um preset de `@workspace/eslint-config` (`./base`, `./next-js`, `./react-internal`); regra nova entra no preset, não no workspace — fonte: [packages/eslint-config/](packages/eslint-config/) (config)
-- [ ] A base mantém `eslint-plugin-only-warn` (tudo vira warning), `eslint-config-prettier` e `turbo/no-undeclared-env-vars` — fonte: [base.js](packages/eslint-config/base.js) (config)
+- [ ] A base mantém `eslint-plugin-only-warn` (tudo vira warning) e `turbo/no-undeclared-env-vars` — fonte: [base.js](packages/eslint-config/base.js) (config)
+- [ ] O par que faz o lint morder: `only-warn` para a UX do editor (amarelo, não vermelho) **e** `--max-warnings 0` no script `lint` de cada workspace. Um sem o outro devolve o gate decorativo — fonte: manifests dos workspaces (config)
+- [ ] `eslint-config-prettier` é o **último** elemento de cada config final (`./next-js`, `./react-internal`), nunca do `./base` — ele desliga as regras estilísticas de tudo que veio antes — fonte: [base.js](packages/eslint-config/base.js) (comentário)
 - [ ] `./next-js` constrói sobre `eslint-config-next` (`core-web-vitals` + `typescript`), não sobre plugins do Next montados à mão — fonte: [next.js](packages/eslint-config/next.js) (config)
 - [ ] A base TS mantém `strict`, `noUncheckedIndexedAccess`, `moduleDetection: "force"` e `isolatedModules`; app estende `nextjs.json`, biblioteca estende `react-library.json` — fonte: [packages/typescript-config/](packages/typescript-config/) (config)
 - [ ] Aliases de import: `@/*` dentro do app, `@workspace/ui/*` para o design system — fonte: [apps/web/tsconfig.json](apps/web/tsconfig.json) (config)
