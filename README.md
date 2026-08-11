@@ -32,7 +32,7 @@ Isso resolve um problema estrutural do shadcn: ele é um **código copiado, nã
 
 Manter `packages/ui` pristine te dá uma estrutura sólida que serve de base de comparação (capacidade de fazer diff com o upstream).
 
-## Getting Started
+## Getting started
 
 ### Local development
 
