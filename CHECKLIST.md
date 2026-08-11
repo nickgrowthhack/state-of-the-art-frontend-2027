@@ -48,6 +48,7 @@ corrige por conta própria: registra-se em
 - [ ] Vive sob `apps/` ou `packages/` — os únicos globs do workspace — fonte: [pnpm-workspace.yaml](pnpm-workspace.yaml) (config)
 - [ ] `package.json` com `private: true` e `type: "module"`; pacotes se chamam `@workspace/<nome>` — fonte: manifests dos workspaces existentes (config)
 - [ ] Expõe `lint`, `format` e `typecheck` (e `dev`/`build`/`start`/`test:e2e` onde fizer sentido); workspace que não expõe não participa de `pnpm lint`/`pnpm typecheck` — fonte: [AGENTS.md](AGENTS.md) §Estrutura do monorepo
+- [ ] App Next: o `typecheck` é `next typegen && tsc --noEmit`, nunca `tsc --noEmit` sozinho — `PageProps`/`LayoutProps`/`RouteContext` são globais gerados em `.next/types` — fonte: [AGENTS.md](AGENTS.md) §Estrutura do monorepo
 - [ ] `eslint.config.js` apenas reexporta um preset de `@workspace/eslint-config` (ver §7)
 - [ ] `tsconfig.json` estende o preset certo de `@workspace/typescript-config` (ver §7)
 - [ ] Dependências internas como `workspace:*` (ver §2)
@@ -122,6 +123,7 @@ Contexto fixo: `cacheComponents` e `partialPrefetching` estão ligados no
 - [ ] `pnpm/action-setup@v4` **sem** o input `version` (herda de `packageManager`) e **antes** de `actions/setup-node@v4` (`node-version: 22`, `cache: pnpm`) — fonte: comentários no [ci.yml](.github/workflows/ci.yml) (config)
 - [ ] Instalação sempre com `pnpm install --frozen-lockfile` — fonte: [AGENTS.md](AGENTS.md) §Comandos canônicos
 - [ ] Ordem do pipeline: install → lint → typecheck → build → instalação de browser → test:e2e — fonte: [ci.yml](.github/workflows/ci.yml) (config)
+- [ ] Cada passo é autossuficiente: nenhum depende de artefato deixado por um passo anterior. O `typecheck` vem antes do `build` e gera os próprios tipos de rota (ver §3) — fonte: [ci.yml](.github/workflows/ci.yml) (config)
 - [ ] Browser escopado e mínimo: `pnpm --filter web exec playwright install --with-deps chromium` — fonte: [ci.yml](.github/workflows/ci.yml) (config)
 - [ ] O build duplo é intencional: `pnpm build` valida o artefato **sem** `NEXT_E2E`; o `webServer` do e2e rebuilda com a flag (ver §6) — fonte: comentários no [turbo.json](turbo.json) e no [ci.yml](.github/workflows/ci.yml) (config)
 - [ ] Condicionais de CI moram no `playwright.config.ts`: `forbidOnly` e reporter `github` só sob `CI`; `reuseExistingServer: !CI` — fonte: [playwright.config.ts](apps/web/playwright.config.ts) (config)
